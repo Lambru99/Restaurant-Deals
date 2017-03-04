@@ -1,6 +1,7 @@
 var httpLevel = require('./httpLevel.js');
+var directionsApi = require('./directionsApi.js');
 
-exports.getRests = function(latitute, longitude, radius, callback)
+exports.getRests = function(latitude, longitude, radius, callback)
 {
   var temp = {
     restaurants: [
@@ -12,6 +13,14 @@ exports.getRests = function(latitute, longitude, radius, callback)
       deal: "Free Bobs until the End of Time",
       hours: "-1:00 AM to 13:00 PM"
     } ]
-  }
+  };
+  callback(temp);
+}
+
+exports.getDir = function(latitude, longitude, address, callback)
+{
+  var temp = {
+    hehe: "XD"
+  };
   callback(temp);
 }
