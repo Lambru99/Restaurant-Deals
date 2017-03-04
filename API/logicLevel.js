@@ -1,5 +1,5 @@
 var httpLevel = require('./httpLevel.js');
-var directionsApi = require('./directionsApi.js');
+var directionsApi = require('./directionsAPI.js');
 
 exports.getRests = function(latitude, longitude, radius, callback)
 {
