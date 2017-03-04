@@ -2,7 +2,7 @@ var fs = require('fs');
 var http = require('http');
 
 var apiKey = null;
-fs.readFile('~/.apiKeys/sqoot', 'utf8', function(err, data) {
+fs.readFile('./.apiKeys/sqoot', 'utf8', function(err, data) {
   if(err) {
     return console.log(err);
   }
