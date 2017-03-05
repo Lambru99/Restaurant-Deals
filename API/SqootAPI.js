@@ -20,9 +20,21 @@ exports.sqoot = function(loca, rad, pagenum, callback)
   options = {
 				hostname:'api.sqoot.com',
 				method: 'GET',
-				path: path
-			  }
-	http.request(options,function(res){
-		callback(res.json.results);
+				path: path,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+			}
+	var req = http.request(options,function(res){
+    var chunks = "";
+    res.on('data', function(chunk){
+      chunks = chunks + chunk;
+    });
+    res.on('end', function(){
+      callback(JSON.parse(chunks));
+    });
+    console.log(res);
 	});
+
+  req.end();
 }
