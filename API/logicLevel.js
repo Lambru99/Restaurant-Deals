@@ -7,6 +7,13 @@ exports.getRests = function(latitude, longitude, radius, index, callback)
 {
   var location = `${latitude},${longitude}`;
   sqootApi.sqoot(location, radius, index, function(response){
+    console.log(response);
+    if(response.hasOwnProperty('error'))
+    {
+      console.log(response.error);
+      callback(response);
+      return;
+    }
     var numDeals = response.deals.length;
     var deals = {
       restaurants: []
