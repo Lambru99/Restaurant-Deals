@@ -23,12 +23,16 @@ exports.getRests = function(latitude, longitude, radius, callback)
         short_title: deal.short_title,
         title: deal.title,
         fine_print: deal.fine_print,
-        url: deal.url
+        url: deal.url,
+        price: parseMinPrice(deal.fine_print)
       }
 
       deals.restaurants.push(rest);
     }
-    getDistances(location, deals, callback);
+    getDistances(location, deals, function(response){
+      sortByPrice(response);
+      callback(response);
+    });
   });
 }
 
@@ -45,6 +49,24 @@ function getDistances(location, deals, callback)
         callback(deals);
     }.bind(this, i));
   }
+}
+
+function parseMinPrice(str)
+{
+  var res = str.match(/\$\d+\.?(\d+)?/i);
+  if(res != null)
+    var ret = {text: res[0], value: parseInt(res[0].substring(1)) };
+  else {
+    var ret = {text: 'No Price Found', value: -1};
+  }
+  return ret;
+}
+
+function sortByPrice(deals)
+{
+  deals.restaurants.sort(function(a,b) {
+    return (a.price.value <= b.price.value ? -1 : 1);
+  });
 }
 
 exports.getDir = function(latitude, longitude, address, callback)
