@@ -16,7 +16,11 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,59 +63,66 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
 
     @Override
     public void onBindViewHolder(RestaurantHolder holder, final int position) {
-        double d = list.get(position).distance/1609.344;
-        DecimalFormat f = new DecimalFormat("##.00");
-        holder.distance.setText(f.format(d) + " miles");
-        holder.deal.setText(list.get(position).deal);
-        holder.name.setText(list.get(position).name);
-        holder.type.setText(list.get(position).type);
-        holder.hours.setText(list.get(position).hours);
-        holder.url.setText(list.get(position).url);
-        holder.url.setMovementMethod(LinkMovementMethod.getInstance());
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String latlong=list.get(position).latlong;
+        if(list.get(position)!=null) {
+            double d = list.get(position).distance / 1609.344;
+            DecimalFormat f = new DecimalFormat("##.00");
+            holder.distance.setText(f.format(d) + " miles");
+            holder.deal.setText(list.get(position).deal);
+            holder.name.setText(list.get(position).name);
+            holder.type.setText(list.get(position).type);
+            SpannableString str=new SpannableString(list.get(position).address+" - Navigate");
+            str.setSpan(new URLSpan(""),0, str.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.address.setText(str, TextView.BufferType.SPANNABLE);
 
-                String[] str = latlong.split(",");
-                double lat = Double.parseDouble(str[0]);
-                double lng = Double.parseDouble(str[1]);
-
-                SingleShotLocationProvider.requestSingleUpdate(context,
-                        new SingleShotLocationProvider.LocationCallback() {
-                            @Override
-                            public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
-                                currentlat=location.latitude;
-                                currentlong=location.longitude;
-
-                            }
+            holder.hours.setText(list.get(position).hours);
 
 
-                        });
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String latlong = list.get(position).latlong;
 
-                Uri uri = Uri.parse("http://maps.google.com/maps?saddr="+currentlat+","+currentlong+"&daddr="+lat+","+lng);
+                    String[] str = latlong.split(",");
+                    double lat = Double.parseDouble(str[0]);
+                    double lng = Double.parseDouble(str[1]);
+
+                    SingleShotLocationProvider.requestSingleUpdate(context,
+                            new SingleShotLocationProvider.LocationCallback() {
+                                @Override
+                                public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
+                                    currentlat = location.latitude;
+                                    currentlong = location.longitude;
+
+                                }
 
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-                if(currentlat!=0&&currentlong!=0)
-                context.startActivity(intent);
-            }
-        });
+                            });
+                    Uri uri;
+                    if (list.get(position).address == "")
+                        uri = Uri.parse("http://maps.google.com/maps?saddr=" + currentlat + "," + currentlong + "&daddr=" + lat + "," + lng);
+                    else
+                        uri = Uri.parse("http://maps.google.com/maps?saddr=" + currentlat + "," + currentlong + "&daddr=" + list.get(position).address);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    if (currentlat != 0 && currentlong != 0)
+                        context.startActivity(intent);
+                }
+            });
 
 
-
+        }
     }
 
     @Override
     public void onViewRecycled(RestaurantHolder holder) {
         if(holder!=null) {
 
-            holder.url.setText(null);
+
             holder.distance.setText(null);
 
             holder.deal.setText(null);
+            holder.address.setText(null);
             holder.hours.setText(null);
             holder.name.setText(null);
             holder.type.setText(null);
@@ -121,21 +132,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
         super.onViewRecycled(holder);
     }
 
-    public class ImageTask extends AsyncTask<String, Void, Bitmap>{
 
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            for(String str:params)
-                try{
-                    URL url = new URL(str);
-                    return (BitmapFactory.decodeStream(url.openConnection().getInputStream()));
-                }catch(Exception e){
-                    Log.e("ADAPTER",e.toString()+" ");}
-
-
-            return null;
-        }
-    }
 
     @Override
     public int getItemCount() {
@@ -149,6 +146,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
         TextView deal;
         TextView type;
         TextView hours;
+        TextView address;
 
         TextView url;
         public RestaurantHolder(View itemView) {
@@ -159,8 +157,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
             deal=(TextView)itemView.findViewById(R.id.deal);
             type=(TextView)itemView.findViewById(R.id.type);
             hours=(TextView)itemView.findViewById(R.id.hours);
-
-            url = (TextView)itemView.findViewById(R.id.url);
+            address=(TextView)itemView.findViewById(R.id.address);
         }
     }
 }

@@ -1,11 +1,16 @@
 package com.siddharthkumar.restaurantdeals;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
             @Override
             public void onRefresh() {
                 refresh();
-                srl.setRefreshing(false);
+
             }
         });
       //  restaurants.add(new Restaurant("Taco Bell", 34, "da", "sda", " sad00", "23", "rs"));
@@ -157,6 +162,17 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
         srl.setRefreshing(true);
         try{
             restaurants.clear();
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        1);
+
+
+            }
             SingleShotLocationProvider.requestSingleUpdate(getApplicationContext(),
                     new SingleShotLocationProvider.LocationCallback() {
                         @Override
@@ -168,12 +184,18 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
 
                     });
-            if(currentlat!=0&&currentlong!=0){
 
-                new FetchRestaurantsTask().execute("http://hackjskn.tk/rests/"+currentlat+"/"+currentlong+"/"+radius).get();
+            for(int x=0;x<results;x++){
+                if(currentlat!=0&&currentlong!=0){
 
+
+
+                new FetchRestaurantsTask().execute("http://hackjskn.tk/rests/"+currentlat+"/"+currentlong+"/"+radius+"/"+(x+1));
+
+
+
+                }
             }
-
         }
         catch(Exception e){Log.e("MAIN", e.toString());}
         srl.setRefreshing(false);
@@ -199,12 +221,10 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
         textView2.setText(spannableString);
     }
 
-    public class FetchRestaurantsTask extends AsyncTask<String,Void, Void>{
-
-
+    public class FetchRestaurantsTask extends AsyncTask<String,Void, Restaurant>{
         @Override
-        protected Void doInBackground(String... params) {
-            for(String str: params){
+        protected Restaurant doInBackground(String... params) {
+                String str=params[0];
                 URL url;
                 String response="";
                 HttpURLConnection urlConnection = null;
@@ -229,17 +249,19 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
                     JSONObject everything = new JSONObject(response);
 
-                    JSONArray restaurantes = everything.getJSONArray("restaurants");
-                    int min=Math.min(restaurantes.length(),results);
-                    Log.e(TAG, ""+min);
-                    for(int x=0; x<min;x++){
-                        Restaurant restaurant = new Restaurant(restaurantes.getJSONObject(x).getString("name"),
-                                restaurantes.getJSONObject(x).getDouble("distance"),restaurantes.getJSONObject(x).getString("short_title"),
-                                restaurantes.getJSONObject(x).getString("title"),restaurantes.getJSONObject(x).getString("fine_print"),restaurantes.getJSONObject(x).getString("address"),restaurantes.getJSONObject(x).getString("url"),
-                                restaurantes.getJSONObject(x).getString("location")) ;
 
-                        restaurants.add(restaurant);
-                    }
+                        Restaurant restaurant = new Restaurant(
+                                everything.getString("name"),
+                                everything.getDouble("distance"),
+                                everything.getString("short_title"),
+                                everything.getString("title"),
+                                everything.getString("fine_print"),
+                                everything.getString("address")
+                                ,
+                                everything.getString("location")) ;
+
+
+                   return restaurant;
 
 
 
@@ -256,8 +278,18 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
 
 
-            }
+
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Restaurant restaurant) {
+            super.onPostExecute(restaurant);
+
+            restaurants.add(restaurant);
+            adapter.notifyDataSetChanged();
+
+
         }
     }
 
@@ -274,11 +306,10 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
         String hours;
         String address;
 
-        String url;
 
         String latlong;
 
-        public Restaurant(String s1,  double d,String s2, String s3, String s4,String d3,String ur,String k){
+        public Restaurant(String s1,  double d,String s2, String s3, String s4,String d3,String k){
             name=s1;
             distance=d;
 
@@ -287,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
             hours=s4;
 
             address=d3;
-            url=ur;
+
             latlong=k;
 
         }
