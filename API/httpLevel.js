@@ -57,6 +57,7 @@ str = str + '                                      "$$$""""<br />'
 app.get("/rests/:latitude/:longitude/:radius/:index", function(req, res)
 {
   restsRes = res;
+  console.log(`${req.params.latitude},${req.params.longitude},${req.params.radius},${req.params.index}`);
   logicLevel.getRests(req.params.latitude, req.params.longitude, req.params.radius, req.params.index, sendRestsResponse);
 });
 
