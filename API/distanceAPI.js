@@ -6,7 +6,7 @@ fs.readFile('./.apiKeys/googleMaps', 'utf8', function(err, data) {
     return console.log(err);
   }
   mapsApiClient = mapsApi.createClient({
-    key: data
+    key: data.substring(0,data.length - 1)
   });
 });
 
@@ -19,10 +19,11 @@ exports.getDistance = function(location, address, mode, callback)
   }, function(err, response){
     if(!err)
     {
-      callback(response.json.results);
+      callback(response);
     }
     else {
       console.log(err);
+      callback(err);
     }
   }
   );
