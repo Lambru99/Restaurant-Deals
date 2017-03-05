@@ -39,6 +39,7 @@ function getDistances(location, deals, callback)
   {
     distanceApi.getDistance(location, deals.restaurants[i].location, 'driving', function(index, response){
       deals.restaurants[index].distance = response.rows[0].elements[0].distance.value;
+      deals.restaurants[index].address = response.destination_addresses[0];
       ++cnt;
       if(cnt >= deals.restaurants.length - 1)
         callback(deals);
