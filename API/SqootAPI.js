@@ -33,7 +33,7 @@ exports.sqoot = function(loca, rad, pagenum, callback)
     res.on('end', function(){
       callback(JSON.parse(chunks));
     });
-    console.log(res);
+    //console.log(res);
 	});
 
   req.end();

@@ -6,17 +6,17 @@ var sqootApi = require('./SqootAPI');
 exports.getRests = function(latitude, longitude, radius, callback)
 {
   var location = `${latitude},${longitude}`;
-  sqootApi.sqoot(location, radius, 1, callback);
-  /*sqootApi.sqoot(location, radius, 1, function(response){
-    callback(response);
-    return;
-    var numDeals = response.query.deals.length;
+  //sqootApi.sqoot(location, radius, 1, callback);
+  sqootApi.sqoot(location, radius, 1, function(response){
+    //console.log(response);
+    //return;
+    var numDeals = response.deals.length;
     var deals = {
       restaurants: []
     }
     for(i = 0; i < numDeals; ++i)
     {
-      var deal = response.query.deals[i].deal;
+      var deal = response.deals[i].deal;
       var rest = {
         name: deal.merchant.name,
         address: (deal.merchant.address != null ? deal.merchant.address : `${deal.merchant.latitude},${deal.merchant.longitude}`),
@@ -29,8 +29,8 @@ exports.getRests = function(latitude, longitude, radius, callback)
       }
       deals.restaurants.push(rest);
     }
-    //callback(deals);
-  });*/
+    callback(deals);
+  });
   /*var temp = {
     restaurants [
       {
