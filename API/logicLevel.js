@@ -55,7 +55,7 @@ function parseMinPrice(str)
 {
   var res = str.match(/\$\d+\.?(\d+)?/i);
   if(res != null)
-    var ret = {text: res[0], value: parseInt(res[0].substring(1)) };
+    var ret = {text: res[0], value: parseFloat(res[0].substring(1)) };
   else {
     var ret = {text: 'No Price Found', value: -1};
   }

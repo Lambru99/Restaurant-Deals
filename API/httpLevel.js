@@ -20,6 +20,7 @@ app.get("/", function(req, res)
   str = str + "\"title\": deal<br />";
   str = str + "\"fine_print\": fine print<br />";
   str = str + "\"url\": url<br />";
+  str = str + "\"price\": {\"text\": string-rep, \"value\": number-rep}<br />"
   str = str + "}]<br />"
   str = str + "}"
   res.send(str);
