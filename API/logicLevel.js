@@ -21,7 +21,7 @@ exports.getRests = function(latitude, longitude, radius, callback)
         name: deal.merchant.name,
         address: (deal.merchant.address != null ? deal.merchant.address : `${deal.merchant.latitude},${deal.merchant.longitude}`),
         image_url: deal.image_url,
-        distance: null,
+        distance: 2,
         short_title: deal.short_title,
         title: deal.title,
         fine_print: deal.fine_print,
