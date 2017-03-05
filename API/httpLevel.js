@@ -21,6 +21,7 @@ app.get("/dir/:latitude/:longitude/:address", function(req, res) {
   dirRes = res;
   logicLevel.getDir(req.params.latitude, req.params.longitude, req.params.address, sendDirResponse);
 });
+
 app.listen(8000, function()
 {
   console.log(`Listening on port 8000`);
