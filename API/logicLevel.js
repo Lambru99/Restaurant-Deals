@@ -6,6 +6,7 @@ var sqootApi = require('./SqootAPI');
 exports.getRests = function(latitude, longitude, radius, callback)
 {
   var location = `${latitude},${longitude}`;
+  sqootApi.sqoot(location, radius, 1, callback);
   /*sqootApi.sqoot(location, radius, 1, function(response){
     callback(response);
     return;
@@ -30,7 +31,7 @@ exports.getRests = function(latitude, longitude, radius, callback)
     }
     //callback(deals);
   });*/
-  var temp = {
+  /*var temp = {
     restaurants [
       {
         name: "Bob's Bob Shack",
@@ -54,13 +55,14 @@ exports.getRests = function(latitude, longitude, radius, callback)
       }
     ]
   }
-  callback(temp);
+  callback(temp);*/
 }
 
 exports.getDir = function(latitude, longitude, address, callback)
 {
-  var temp = {
+  distanceApi.getDistance("955 Loop Road Richardson", "300 Orchid Circle, Cedar Park, TX", "driving", callback);
+  /*var temp = {
     hehe: "XD"
   };
-  callback(temp);
+  callback(temp);*/
 }

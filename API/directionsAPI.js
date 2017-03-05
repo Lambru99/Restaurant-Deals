@@ -6,6 +6,6 @@ fs.readFile('./.apiKeys/googleMaps', 'utf8', function(err, data) {
     return console.log(err);
   }
   mapsApiClient = mapsApi.createClient({
-    key: data
+    key: data.substring(0,data.length - 1)
   });
 });
