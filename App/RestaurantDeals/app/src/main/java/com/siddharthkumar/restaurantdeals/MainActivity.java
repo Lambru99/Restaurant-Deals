@@ -3,6 +3,7 @@ package com.siddharthkumar.restaurantdeals;
 import android.content.Intent;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +16,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,12 +31,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RadiusFragment.OnFragmentInteractionListener{
     RecyclerView recyclerView;
     SwipeRefreshLayout srl;
     ArrayList<Restaurant> restaurants= new ArrayList<Restaurant>();
     double radius=10;
     RVAdapter adapter;
+    RadiusFragment radiusFragment;
 
     final String TAG = "Main";
     @Override
@@ -40,8 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView)findViewById(R.id.list);
         srl = (SwipeRefreshLayout) findViewById(R.id.refresh);
+
+
         adapter=new RVAdapter(restaurants,getApplicationContext());
+
         recyclerView.setAdapter(adapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -50,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 srl.setRefreshing(false);
             }
         });
+      //  restaurants.add(new Restaurant("Taco Bell", 34, "da", "sda", " sad00", "23", "rs"));
 
         refresh();
 
@@ -64,7 +75,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setNewRadius(){
+        if(radiusFragment==null){
 
+            radiusFragment = RadiusFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter,R.anim.pop_enter).add(R.id.main,radiusFragment).commit();
+
+
+        }
+        else{
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.exit,R.anim.pop_exit).remove(radiusFragment).commit();
+            radiusFragment=null;
+        }
 
 
     }
@@ -97,6 +118,16 @@ public class MainActivity extends AppCompatActivity {
         catch(Exception e){}
 
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFragmentInteraction() {
+        SeekBar seekBar = (SeekBar)findViewById(R.id.seekBar);
+        if(seekBar!=null)
+          radius = seekBar.getProgress();
+        TextView textView = (TextView)findViewById(R.id.radiusnumber);
+        textView.setText("Radius = "+radius);
+
     }
 
     public class FetchRestaurantsTask extends AsyncTask<String,Void, Void>{
@@ -132,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray restaurantes = everything.getJSONArray("restaurants");
                     for(int x=0; x<restaurantes.length();x++){
                         Restaurant restaurant = new Restaurant(restaurantes.getJSONObject(x).getString("name"),
-                                restaurantes.getJSONObject(x).getDouble("distance"),restaurantes.getJSONObject(x).getString("deal"),
-                                "Fast Food",restaurantes.getJSONObject(x).getString("hours"),
-                                restaurantes.getJSONObject(x).getString("image_url"),restaurantes.getJSONObject(x).getString("address")) ;
+                                restaurantes.getJSONObject(x).getDouble("distance"),restaurantes.getJSONObject(x).getString("short_title"),
+                                restaurantes.getJSONObject(x).getString("title"),restaurantes.getJSONObject(x).getString("fine_print"),
+                                restaurantes.getJSONObject(x).getString("image_url"),restaurantes.getJSONObject(x).getString("address"),restaurantes.getJSONObject(x).getString("url")) ;
 
                         restaurants.add(restaurant);
                     }
@@ -173,7 +204,9 @@ public class MainActivity extends AppCompatActivity {
         String hours;
         String address;
 
-        public Restaurant(String s1,  double d,String s2, String s3, String s4, String s5,String d3){
+        String url;
+
+        public Restaurant(String s1,  double d,String s2, String s3, String s4, String s5,String d3,String ur){
             name=s1;
             distance=d;
 
@@ -182,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
             hours=s4;
             ImageURL=s5;
             address=d3;
+            url=ur;
+
         }
     }
 }
