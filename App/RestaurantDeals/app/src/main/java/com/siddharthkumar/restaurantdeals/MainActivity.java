@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
     ArrayList<Restaurant> restaurants= new ArrayList<Restaurant>();
     double radius=10;
     RVAdapter adapter;
+    double currentlat;
+    double currentlong;
     RadiusFragment radiusFragment;
 
     final String TAG = "Main";
@@ -113,11 +115,24 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
     public void refresh()  {
         try{
             restaurants.clear();
-            new FetchRestaurantsTask().execute("http://hackjskn.tk/rests/123/123/123").get();
+            SingleShotLocationProvider.requestSingleUpdate(getApplicationContext(),
+                    new SingleShotLocationProvider.LocationCallback() {
+                        @Override
+                        public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
+                            currentlat=location.latitude;
+                            currentlong=location.longitude;
+
+                        }
+
+
+                    });
+            if(currentlat!=0&&currentlong!=0)
+                new FetchRestaurantsTask().execute("http://hackjskn.tk/rests/"+currentlat+"/"+currentlong+"/"+radius).get();
         }
-        catch(Exception e){}
+        catch(Exception e){Log.e("MAIN", e.toString());}
 
         adapter.notifyDataSetChanged();
+        srl.setRefreshing(false);
     }
 
     @Override
@@ -162,10 +177,12 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
                     JSONArray restaurantes = everything.getJSONArray("restaurants");
                     for(int x=0; x<restaurantes.length();x++){
+                        Log.e("MAIN",x+"");
                         Restaurant restaurant = new Restaurant(restaurantes.getJSONObject(x).getString("name"),
                                 restaurantes.getJSONObject(x).getDouble("distance"),restaurantes.getJSONObject(x).getString("short_title"),
                                 restaurantes.getJSONObject(x).getString("title"),restaurantes.getJSONObject(x).getString("fine_print"),
-                                restaurantes.getJSONObject(x).getString("image_url"),restaurantes.getJSONObject(x).getString("address"),restaurantes.getJSONObject(x).getString("url")) ;
+                                restaurantes.getJSONObject(x).getString("image_url"),restaurantes.getJSONObject(x).getString("address"),restaurantes.getJSONObject(x).getString("url"),
+                                restaurantes.getJSONObject(x).getString("location")) ;
 
                         restaurants.add(restaurant);
                     }
@@ -206,7 +223,9 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
         String url;
 
-        public Restaurant(String s1,  double d,String s2, String s3, String s4, String s5,String d3,String ur){
+        String latlong;
+
+        public Restaurant(String s1,  double d,String s2, String s3, String s4, String s5,String d3,String ur,String k){
             name=s1;
             distance=d;
 
@@ -216,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
             ImageURL=s5;
             address=d3;
             url=ur;
+            latlong=k;
 
         }
     }
