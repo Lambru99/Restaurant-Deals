@@ -20,7 +20,7 @@ exports.getRests = function(latitude, longitude, radius, callback)
       var rest = {
         name: deal.merchant.name,
         address: (deal.merchant.address != null ? deal.merchant.address : `${deal.merchant.latitude},${deal.merchant.longitude}`),
-        image_url: deal.image_url,
+        image_url: deal.image_url + "&geometry=150x150",
         distance: 2,
         short_title: deal.short_title,
         title: deal.title,
