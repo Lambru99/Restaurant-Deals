@@ -40,7 +40,7 @@ exports.getRests = function(latitude, longitude, radius, callback)
         short_title: "Deal Short",
         title: "Free Bobs all day long!",
         fine_print: "With purchase of a Bob",
-        url: "example.com"
+        url: "http://example.com"
       }
       {
         name: "Jane's Jane Shack",
@@ -50,7 +50,7 @@ exports.getRests = function(latitude, longitude, radius, callback)
         short_title: "Deal Short",
         title: "Free Janes all day long!",
         fine_print: "With purchase of a Jane",
-        url: "example.com"
+        url: "http://example.com"
       }
     ]
   }
