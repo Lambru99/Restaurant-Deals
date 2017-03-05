@@ -68,18 +68,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double lat = 33.003060;
+                String latlong=list.get(position).latlong;
 
-                double lng = -96.768356;
-                Criteria criteria = new Criteria();
-                LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+                String[] str = latlong.split(",");
+                double lat = Double.parseDouble(str[0]);
+                double lng = Double.parseDouble(str[1]);
 
-                try {
-                    Location devicelocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
-                    currentlat=devicelocation.getLatitude();
-                    currentlong=devicelocation.getLongitude();
-                }catch(SecurityException se){}
-                catch (NullPointerException npe){}
                 SingleShotLocationProvider.requestSingleUpdate(context,
                         new SingleShotLocationProvider.LocationCallback() {
                             @Override
@@ -98,6 +92,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+                if(currentlat!=0&&currentlong!=0)
                 context.startActivity(intent);
             }
         });
