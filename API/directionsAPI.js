@@ -10,20 +10,20 @@ fs.readFile('./.apiKeys/googleMaps', 'utf8', function(err, data) {
   });
 });
 
-exports.getDirection = function(start,dest,mode,points,alternatives,highways,tolls,callback)
+//location start;
+//location dest;
+//travelMode mode; //one of 'driving', 'walking', 'bicycling', 'transit'
+//locations points; //separate with '|'
+//avoids avoid; //any of 'tolls', 'highways', 'ferries', separate with '|'
+exports.getDirection = function(start,dest,mode,callback)
 {
   mapsApiClient.directions({
     origin: start,
-    destination: dest,
-    travelMode: mode,
-    optimizeWaypoints: points,
-    provideRouteAlternatives: alternatives,
-    avoidHighways: highways,
-    avoidTolls: tolls
+    destination: dest
   }, function(err,res){
     if(!err)
     {
-      callback(res.json.results);
+      callback(res.json);
     }
     else {
 			console.log(err);

@@ -49,5 +49,6 @@ function getDistances(location, deals, callback)
 
 exports.getDir = function(latitude, longitude, address, callback)
 {
-  distanceApi.getDistance("955 Loop Road Richardson", "300 Orchid Circle, Cedar Park, TX", "driving", callback);
+  var location = `${latitude},${longitude}`;
+  directionsApi.getDirection(location, address, 'driving', callback);
 }
