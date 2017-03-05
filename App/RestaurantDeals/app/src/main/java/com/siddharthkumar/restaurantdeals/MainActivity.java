@@ -3,6 +3,8 @@ package com.siddharthkumar.restaurantdeals;
 import android.content.Intent;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,18 +39,26 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
     RecyclerView recyclerView;
     SwipeRefreshLayout srl;
     ArrayList<Restaurant> restaurants= new ArrayList<Restaurant>();
-    double radius=10;
+    int radius=10;
     RVAdapter adapter;
     double currentlat;
     double currentlong;
     RadiusFragment radiusFragment;
-    int results = 25;
-
+    int results = 10;
+    MenuItem reveal;
     final String TAG = "Main";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(savedInstanceState!=null){
+            results = savedInstanceState.getInt("results");
+            radius = savedInstanceState.getInt("radius");
+            currentlat = savedInstanceState.getDouble("lat");
+            currentlong = savedInstanceState.getDouble("long");
+
+        }
         recyclerView = (RecyclerView)findViewById(R.id.list);
         srl = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
@@ -69,11 +81,25 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
 
     }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("radius",radius);
+        outState.putInt("results",results);
+        outState.putDouble("lat",currentlat);
+        outState.putDouble("long",currentlong);
+
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        reveal = menu.findItem(R.id.radius);
         return true;
     }
 
@@ -82,15 +108,24 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
             radiusFragment = RadiusFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putDouble("radius",radius);
+            bundle.putInt("radius",radius);
             bundle.putInt("results",results);
+            Log.e(TAG,radius+","+results);
+            radiusFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter,R.anim.pop_enter).add(R.id.main,radiusFragment).commit();
+
+            reveal.setIcon(R.mipmap.ic_keyboard_arrow_up_white_24dp);
 
 
         }
         else{
+            radius=((SeekBar)findViewById(R.id.seekBar)).getProgress();
+            results=((SeekBar)findViewById(R.id.seekBar2)).getProgress();
+            Log.e(TAG,radius+","+results);
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.exit,R.anim.pop_exit).remove(radiusFragment).commit();
             radiusFragment=null;
+
+            reveal.setIcon(R.mipmap.ic_keyboard_arrow_down_white_24dp);
         }
 
 
@@ -102,6 +137,8 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
             case R.id.radius:{
                 setNewRadius();
+
+
                 return true;
             }
 
@@ -117,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
 
     public void refresh()  {
+        srl.setRefreshing(true);
         try{
             restaurants.clear();
             SingleShotLocationProvider.requestSingleUpdate(getApplicationContext(),
@@ -130,11 +168,15 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
 
 
                     });
-            if(currentlat!=0&&currentlong!=0)
+            if(currentlat!=0&&currentlong!=0){
+
                 new FetchRestaurantsTask().execute("http://hackjskn.tk/rests/"+currentlat+"/"+currentlong+"/"+radius).get();
+
+            }
+
         }
         catch(Exception e){Log.e("MAIN", e.toString());}
-
+        srl.setRefreshing(false);
         adapter.notifyDataSetChanged();
 
     }
@@ -147,6 +189,14 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
         TextView textView = (TextView)findViewById(R.id.radiusnumber);
         textView.setText("Radius = "+radius);
 
+        SeekBar seekBar2 = (SeekBar)findViewById(R.id.seekBar2);
+        if(seekBar!=null)
+            results = seekBar2.getProgress();
+        TextView textView2 = (TextView)findViewById(R.id.resultstext);
+        String st = "Display "+results+" Results";
+        SpannableString spannableString = new SpannableString(st);
+        spannableString.setSpan(new UnderlineSpan(), 8,10,0);
+        textView2.setText(spannableString);
     }
 
     public class FetchRestaurantsTask extends AsyncTask<String,Void, Void>{
@@ -180,8 +230,9 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
                     JSONObject everything = new JSONObject(response);
 
                     JSONArray restaurantes = everything.getJSONArray("restaurants");
-                    for(int x=0; x<restaurantes.length();x++){
-
+                    int min=Math.min(restaurantes.length(),results);
+                    Log.e(TAG, ""+min);
+                    for(int x=0; x<min;x++){
                         Restaurant restaurant = new Restaurant(restaurantes.getJSONObject(x).getString("name"),
                                 restaurantes.getJSONObject(x).getDouble("distance"),restaurantes.getJSONObject(x).getString("short_title"),
                                 restaurantes.getJSONObject(x).getString("title"),restaurantes.getJSONObject(x).getString("fine_print"),restaurantes.getJSONObject(x).getString("address"),restaurantes.getJSONObject(x).getString("url"),
@@ -240,5 +291,7 @@ public class MainActivity extends AppCompatActivity implements RadiusFragment.On
             latlong=k;
 
         }
+
+
     }
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +23,9 @@ public class RadiusFragment extends Fragment {
     SeekBar seekBar;
     SeekBar seekBar2;
     TextView radius;
-    TextView resultstext;
+    int radius2=10;
+    int results=25;
+
     public RadiusFragment() {
         // Required empty public constructor
     }
@@ -41,6 +45,13 @@ public class RadiusFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle b = getArguments();
+
+        if(b!=null) {
+            radius2 = b.getInt("radius");
+            results = b.getInt("results");
+        }
+
     }
 
     @Override
@@ -48,14 +59,27 @@ public class RadiusFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_radius, container, false);
-        double radius2 = getArguments().getDouble("radius");
-        final int results = getArguments().getInt("results");
+        Bundle b = getActivity().getIntent().getExtras();
 
+        if(b!=null) {
+                radius2 = b.getInt("radius");
+                results = b.getInt("results");
+        }
+        Log.e("Fragment",radius2+","+results);
         seekBar = (SeekBar)view.findViewById(R.id.seekBar);
         seekBar2 = (SeekBar)view.findViewById(R.id.seekBar2);
+        TextView radiusText = (TextView)view.findViewById(R.id.radiusnumber);
+        radiusText.setText("Radius = "+radius2);
+        TextView resultstext = (TextView)view.findViewById(R.id.resultstext);
+        String st = "Display "+results+" Results";
+        SpannableString spannableString = new SpannableString(st);
+        spannableString.setSpan(new UnderlineSpan(), 8,10,0);
+        resultstext.setText(spannableString);
 
         if(seekBar!=null&&seekBar2!=null){
-            seekBar.setProgress((int)radius2);
+            if(radius2!=0)
+            seekBar.setProgress(radius2);
+            if(results!=0)
             seekBar2.setProgress(results);
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -64,7 +88,7 @@ public class RadiusFragment extends Fragment {
                     onSeekChanged();
                     TextView radiusText = (TextView)getActivity().findViewById(R.id.radiusnumber);
                     radiusText.setText("Radius = "+progress);
-                    Log.e("Fragment", "Update");
+
                 }
 
                 @Override
@@ -82,8 +106,10 @@ public class RadiusFragment extends Fragment {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     onSeekChanged();
                     TextView radiusText = (TextView)getActivity().findViewById(R.id.resultstext);
-                    radiusText.setText("Get <p><u>"+results+"</u></p> Results");
-                    Log.e("Fragment", "Update");
+                    String st = "Display "+progress+" Results";
+                    SpannableString spannableString = new SpannableString(st);
+                    spannableString.setSpan(new UnderlineSpan(), 8,10,0);
+                    radiusText.setText(spannableString);
                 }
 
                 @Override
