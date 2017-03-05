@@ -7,7 +7,7 @@ exports.getRests = function(latitude, longitude, radius, index, callback)
 {
   var location = `${latitude},${longitude}`;
   sqootApi.sqoot(location, radius, index, function(response){
-    console.log(response);
+    console.log(response.query);
     if(response.hasOwnProperty('error'))
     {
       console.log(response.error);

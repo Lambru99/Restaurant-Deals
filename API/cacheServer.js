@@ -72,7 +72,7 @@ server.open(function(err){
   }
 });
 
-var client = redis.createClient();
+var client = redis.createClient({port: 6379});
 
 client.on('error', function(err) {
   console.log("Error " + err);
@@ -80,32 +80,35 @@ client.on('error', function(err) {
 
 exports.sqoot = function(loca, rad, pagenum, callback)
 {
-  client.get(`sqoot-${loca},${rad},${pagenum}`, function(error, result){
+  client.get(`sqoot-${loca}:${rad}:${pagenum}`, function(error, result){
+	console.log(result);
     if(result == null)
     {
       SqootAPI.sqoot(loca, rad, pagenum, function(response){
-        client.set(`sqoot-${loca},${rad},${pagenum}`,response);
+        client.set(`sqoot-${loca}:${rad}:${pagenum}`,JSON.stringify(response));
+	console.log(response);
         callback(response);
       });
     }
     else {
-      callback(result);
+	console.log(JSON.parse(result));
+      callback(JSON.parse(result));
     }
   });
 }
 
 exports.getDistance = function(location, address, mode, callback)
 {
-  client.get(`dist-${location},${address},${mode}`, function(error, result){
+  client.get(`dist-${location}:${address}:${mode}`, function(error, result){
     if(result == null)
     {
       distanceAPI.getDistance(location, address, mode, function(response){
-        client.set(`dist-${location},${address},${mode}`, response);
+        client.set(`dist-${location}:${address}:${mode}`, JSON.stringify(response));
         callback(response);
       });
     }
     else {
-      callback(result);
+      callback(JSON.parse(result));
     }
   });
 }
