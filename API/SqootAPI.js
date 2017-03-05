@@ -7,7 +7,7 @@ fs.readFile('./.apiKeys/sqoot', 'utf8', function(err, data) {
     return console.log(err);
   }
 	apiKey = data;
-);
+});
 
 var per_page = 100;
 
