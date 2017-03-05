@@ -6,10 +6,7 @@ var sqootApi = require('./SqootAPI');
 exports.getRests = function(latitude, longitude, radius, callback)
 {
   var location = `${latitude},${longitude}`;
-  //sqootApi.sqoot(location, radius, 1, callback);
   sqootApi.sqoot(location, radius, 1, function(response){
-    //console.log(response);
-    //return;
     var numDeals = response.deals.length;
     var deals = {
       restaurants: []
@@ -28,42 +25,28 @@ exports.getRests = function(latitude, longitude, radius, callback)
         fine_print: deal.fine_print,
         url: deal.url
       }
+
       deals.restaurants.push(rest);
     }
-    callback(deals);
+    getDistances(location, deals, callback);
   });
-  /*var temp = {
-    restaurants [
-      {
-        name: "Bob's Bob Shack",
-        address: "123 Bob's Bob Lane",
-        image_url: "http://mylolface.com/assets/faces/happy-smile.jpg",
-        distance: 9.3,
-        short_title: "Deal Short",
-        title: "Free Bobs all day long!",
-        fine_print: "With purchase of a Bob",
-        url: "http://example.com"
-      }
-      {
-        name: "Jane's Jane Shack",
-        address: "123 Jane's Jane Lane",
-        image_url: "http://mylolface.com/assets/faces/happy-smile.jpg",
-        distance: 9.3,
-        short_title: "Deal Short",
-        title: "Free Janes all day long!",
-        fine_print: "With purchase of a Jane",
-        url: "http://example.com"
-      }
-    ]
+}
+
+function getDistances(location, deals, callback)
+{
+  var cnt = 0;
+  for(i = 0; i < deals.restaurants.length; ++i)
+  {
+    distanceApi.getDistance(location, deals.restaurants[i].location, 'driving', function(index, response){
+      deals.restaurants[index].distance = response.rows[0].elements[0].distance.value;
+      ++cnt;
+      if(cnt >= deals.restaurants.length - 1)
+        callback(deals);
+    }.bind(this, i));
   }
-  callback(temp);*/
 }
 
 exports.getDir = function(latitude, longitude, address, callback)
 {
   distanceApi.getDistance("955 Loop Road Richardson", "300 Orchid Circle, Cedar Park, TX", "driving", callback);
-  /*var temp = {
-    hehe: "XD"
-  };
-  callback(temp);*/
 }

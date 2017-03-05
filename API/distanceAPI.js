@@ -19,7 +19,7 @@ exports.getDistance = function(location, address, mode, callback)
   }, function(err, response){
     if(!err)
     {
-      callback(response);
+      callback(response.json);
     }
     else {
       console.log(err);
