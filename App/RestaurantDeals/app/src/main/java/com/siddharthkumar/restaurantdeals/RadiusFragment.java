@@ -19,7 +19,9 @@ public class RadiusFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     SeekBar seekBar;
+    SeekBar seekBar2;
     TextView radius;
+    TextView resultstext;
     public RadiusFragment() {
         // Required empty public constructor
     }
@@ -46,8 +48,16 @@ public class RadiusFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_radius, container, false);
+        double radius2 = getArguments().getDouble("radius");
+        final int results = getArguments().getInt("results");
+
         seekBar = (SeekBar)view.findViewById(R.id.seekBar);
-        if(seekBar!=null)
+        seekBar2 = (SeekBar)view.findViewById(R.id.seekBar2);
+
+        if(seekBar!=null&&seekBar2!=null){
+            seekBar.setProgress((int)radius2);
+            seekBar2.setProgress(results);
+
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -67,6 +77,26 @@ public class RadiusFragment extends Fragment {
 
                 }
             });
+            seekBar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    onSeekChanged();
+                    TextView radiusText = (TextView)getActivity().findViewById(R.id.resultstext);
+                    radiusText.setText("Get <p><u>"+results+"</u></p> Results");
+                    Log.e("Fragment", "Update");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            }
         else
             Log.e("FRAGMENT","NULL");
 
