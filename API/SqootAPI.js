@@ -8,7 +8,7 @@ fs.readFile('./.apiKeys/sqoot', 'utf8', function(err, data) {
     return console.log(err);
   }
 	apiKey = data.substring(0,data.length - 1);
-  console.log(apiKey);
+  //console.log(apiKey);
 });
 
 var per_page = 100;
