@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -58,7 +59,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
 
     @Override
     public void onBindViewHolder(RestaurantHolder holder, final int position) {
-        holder.distance.setText(list.get(position).distance + "");
+        double d = list.get(position).distance/1609.344;
+        DecimalFormat f = new DecimalFormat("##.00");
+        holder.distance.setText(f.format(d) + " miles");
         holder.deal.setText(list.get(position).deal);
         holder.name.setText(list.get(position).name);
         holder.type.setText(list.get(position).type);
@@ -97,18 +100,26 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
             }
         });
 
-        //convert the string url to image
-        try{
-
-            holder.imageView.setImageBitmap(new ImageTask().execute(list.get(position).ImageURL).get());
-        }catch(Exception e){
-            Log.e("ADAPTER",e.toString()+" ");}
-
 
 
     }
 
+    @Override
+    public void onViewRecycled(RestaurantHolder holder) {
+        if(holder!=null) {
 
+            holder.url.setText(null);
+            holder.distance.setText(null);
+
+            holder.deal.setText(null);
+            holder.hours.setText(null);
+            holder.name.setText(null);
+            holder.type.setText(null);
+        }
+
+
+        super.onViewRecycled(holder);
+    }
 
     public class ImageTask extends AsyncTask<String, Void, Bitmap>{
 
@@ -138,7 +149,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
         TextView deal;
         TextView type;
         TextView hours;
-        ImageView imageView;
+
         TextView url;
         public RestaurantHolder(View itemView) {
             super(itemView);
@@ -148,7 +159,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RestaurantHolder> 
             deal=(TextView)itemView.findViewById(R.id.deal);
             type=(TextView)itemView.findViewById(R.id.type);
             hours=(TextView)itemView.findViewById(R.id.hours);
-            imageView=(ImageView)itemView.findViewById(R.id.image);
+
             url = (TextView)itemView.findViewById(R.id.url);
         }
     }
