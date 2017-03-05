@@ -8,7 +8,7 @@ var dirRes = null;
 
 app.get("/", function(req, res)
 {
-  var str = "hackjskn.tk/rests/lat/long/rad<br />"
+  /*var str = "hackjskn.tk/rests/lat/long/rad<br />"
   str = str + "{<br />";
   str = str + "\"restaurants\":[{<br />";
   str = str + "\"name\": name<br />";
@@ -22,14 +22,42 @@ app.get("/", function(req, res)
   str = str + "\"url\": url<br />";
   str = str + "\"price\": {\"text\": string-rep, \"value\": number-rep}<br />"
   str = str + "}]<br />"
-  str = str + "}"
+  str = str + "}"*/
+
+var str = '                          oooo$$$$$$$$$$$$oooo<br />'
+str = str + '                      oo$$$$$$$$$$$$$$$$$$$$$$$$o<br />'
+str = str + '                   oo$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o         o$   $$ o$<br />'
+str = str + '   o $ oo        o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o       $$ $$ $$o$<br />'
+str = str + 'oo $ $ "$      o$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$o       $$$o$$o$<br />'
+str = str + '"$$$$$$o$     o$$$$$$$$$      $$$$$$$$$$$      $$$$$$$$$$o    $$$$$$$$<br />'
+str = str + '  $$$$$$$    $$$$$$$$$$$      $$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$<br />'
+str = str + '  $$$$$$$$$$$$$$$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$$$$$$  """$$$<br />'
+str = str + '   "$$$""""$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     "$$$<br />'
+str = str + '    $$$   o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     "$$$o<br />'
+str = str + '   o$$"   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$       $$$o<br />'
+str = str + '   $$$    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" "$$$$$$ooooo$$$$o<br />'
+str = str + '  o$$$oooo$$$$$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   o$$$$$$$$$$$$$$$$$<br />'
+str = str + '  $$$$$$$$"$$$$   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     $$$$""""""""<br />'
+str = str + ' """"       $$$$    "$$$$$$$$$$$$$$$$$$$$$$$$$$$$"      o$$$<br />'
+str = str + '            "$$$o     """$$$$$$$$$$$$$$$$$$"$$"         $$$<br />'
+str = str + '              $$$o          "$$""$$$$$$""""           o$$$<br />'
+str = str + '               $$$$o                                o$$$"<br />'
+str = str + '                "$$$$o      o$$$$$$o"$$$$o        o$$$$<br />'
+str = str + '                  "$$$$$oo     ""$$$$o$$$$$o   o$$$$""<br />'
+str = str + '                     ""$$$$$oooo  "$$$o$$$$$$$$$"""<br />'
+str = str + '                        ""$$$$$$$oo $$$$$$$$$$<br />'
+str = str + '                                """"$$$$$$$$$$$<br />'
+str = str + '                                    $$$$$$$$$$$$<br />'
+str = str + '                                     $$$$$$$$$$"<br />'
+str = str + '                                      "$$$""""<br />'
+
   res.send(str);
 });
 
-app.get("/rests/:latitude/:longitude/:radius", function(req, res)
+app.get("/rests/:latitude/:longitude/:radius/:index", function(req, res)
 {
   restsRes = res;
-  logicLevel.getRests(req.params.latitude, req.params.longitude, req.params.radius, sendRestsResponse);
+  logicLevel.getRests(req.params.latitude, req.params.longitude, req.params.radius, req.params.index, sendRestsResponse);
 });
 
 app.get("/dir/:latitude/:longitude/:address", function(req, res) {

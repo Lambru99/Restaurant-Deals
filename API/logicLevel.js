@@ -3,10 +3,10 @@ var directionsApi = require('./directionsAPI.js');
 var distanceApi = require('./distanceAPI.js');
 var sqootApi = require('./SqootAPI');
 
-exports.getRests = function(latitude, longitude, radius, callback)
+exports.getRests = function(latitude, longitude, radius, index, callback)
 {
   var location = `${latitude},${longitude}`;
-  sqootApi.sqoot(location, radius, 1, function(response){
+  sqootApi.sqoot(location, radius, index, function(response){
     var numDeals = response.deals.length;
     var deals = {
       restaurants: []
@@ -30,8 +30,9 @@ exports.getRests = function(latitude, longitude, radius, callback)
       deals.restaurants.push(rest);
     }
     getDistances(location, deals, function(response){
-      sortByPrice(response);
-      callback(response);
+    //var response = deals;
+      //sortByPrice(response);
+      callback(response.restaurants[0]);
     });
   });
 }

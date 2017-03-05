@@ -11,7 +11,7 @@ fs.readFile('./.apiKeys/sqoot', 'utf8', function(err, data) {
   //console.log(apiKey);
 });
 
-var per_page = 100;
+var per_page = 1;
 
 exports.sqoot = function(loca, rad, pagenum, callback)
 {
