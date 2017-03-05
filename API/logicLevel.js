@@ -1,7 +1,7 @@
 var httpLevel = require('./httpLevel.js');
 var directionsApi = require('./directionsAPI.js');
-var distanceApi = require('./distanceAPI.js');
-var sqootApi = require('./SqootAPI');
+var distanceApi = require('./cacheServer.js');
+var sqootApi = require('./cacheServer.js');
 
 exports.getRests = function(latitude, longitude, radius, index, callback)
 {
@@ -12,6 +12,12 @@ exports.getRests = function(latitude, longitude, radius, index, callback)
     {
       console.log(response.error);
       callback(response);
+      return;
+    }
+    if(index >= response.query.total)
+    {
+      console.log(`Index ${index} out of bounds: ${response.query.total}`);
+      callback(`Index ${index} out of bounds: ${response.query.total}`);
       return;
     }
     var numDeals = response.deals.length;

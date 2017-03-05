@@ -56,12 +56,21 @@ redisCache.wrap(key, function (cb) {
 });
 */
 //dependencies needed
-var app = require('express')();
-var responseTime = require('response-time');
-var axios = require('axios');
 var redis = require('redis');
 var distanceAPI = require('./distanceAPI.js');
 var SqootAPI = require('./SqootAPI.js');
+const RedisServer = require('redis-server');
+const server = new RedisServer(6379);
+
+server.open(function(err){
+  if(err === null)
+  {
+    console.log('Redis listening on port 6379');
+  }
+  else {
+    console.log(err);
+  }
+});
 
 var client = redis.createClient();
 
@@ -69,25 +78,34 @@ client.on('error', function(err) {
   console.log("Error " + err);
 });
 
-app.set('port',(process.env.PORT || 6379));
-
-app.use(responseTime());
-
-var distance;
-distanceAPI.getDistance(location,address,mode,function(response)
+exports.sqoot = function(loca, rad, pagenum, callback)
 {
-  distance = response;
-});
-var sqoot;
-SqootAPI.sqoot(loca,rad,pagenum,function(response)
+  client.get(`sqoot-${loca},${rad},${pagenum}`, function(error, result){
+    if(result == null)
+    {
+      SqootAPI.sqoot(loca, rad, pagenum, function(response){
+        client.set(`sqoot-${loca},${rad},${pagenum}`,response);
+        callback(response);
+      });
+    }
+    else {
+      callback(result);
+    }
+  });
+}
+
+exports.getDistance = function(location, address, mode, callback)
 {
-  sqoot = response;
-});
-
-client.get(function(error, result)); {
-
-if (result) {
-  res.send({"distance": result, "source": "redis cache"});
-} else {
- .then()
+  client.get(`dist-${location},${address},${mode}`, function(error, result){
+    if(result == null)
+    {
+      distanceAPI.getDistance(location, address, mode, function(response){
+        client.set(`dist-${location},${address},${mode}`, response);
+        callback(response);
+      });
+    }
+    else {
+      callback(result);
+    }
+  });
 }

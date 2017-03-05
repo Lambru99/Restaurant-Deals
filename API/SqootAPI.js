@@ -16,7 +16,7 @@ var per_page = 1;
 exports.sqoot = function(loca, rad, pagenum, callback)
 {
 	var path = '/v2/deals?api_key=' + apiKey + '&category_slugs=restaurants&online=false&location=' + loca + '&radius=' + rad + '&page=' + pagenum + '&per_page=' + per_page + '&order=distance';
-  console.log(path);
+  //console.log(path);
   options = {
 				hostname:'api.sqoot.com',
 				method: 'GET',
