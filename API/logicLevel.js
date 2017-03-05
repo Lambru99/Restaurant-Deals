@@ -6,7 +6,9 @@ var sqootApi = require('./SqootAPI');
 exports.getRests = function(latitude, longitude, radius, callback)
 {
   var location = `${latitude},${longitude}`;
-  sqootApi.sqoot(location, radius, 1, function(response){
+  /*sqootApi.sqoot(location, radius, 1, function(response){
+    callback(response);
+    return;
     var numDeals = response.query.deals.length;
     var deals = {
       restaurants: []
@@ -26,8 +28,33 @@ exports.getRests = function(latitude, longitude, radius, callback)
       }
       deals.restaurants.push(rest);
     }
-    callback(deals);
-  });
+    //callback(deals);
+  });*/
+  var temp = {
+    restaurants [
+      {
+        name: "Bob's Bob Shack",
+        address: "123 Bob's Bob Lane",
+        image_url: "http://mylolface.com/assets/faces/happy-smile.jpg",
+        distance: 9.3,
+        short_title: "Deal Short",
+        title: "Free Bobs all day long!",
+        fine_print: "With purchase of a Bob",
+        url: "example.com"
+      }
+      {
+        name: "Jane's Jane Shack",
+        address: "123 Jane's Jane Lane",
+        image_url: "http://mylolface.com/assets/faces/happy-smile.jpg",
+        distance: 9.3,
+        short_title: "Deal Short",
+        title: "Free Janes all day long!",
+        fine_print: "With purchase of a Jane",
+        url: "example.com"
+      }
+    ]
+  }
+  callback(temp);
 }
 
 exports.getDir = function(latitude, longitude, address, callback)
