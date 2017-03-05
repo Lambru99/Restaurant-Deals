@@ -19,7 +19,8 @@ exports.getRests = function(latitude, longitude, radius, callback)
       var deal = response.deals[i].deal;
       var rest = {
         name: deal.merchant.name,
-        address: (deal.merchant.address != null ? deal.merchant.address : `${deal.merchant.latitude},${deal.merchant.longitude}`),
+        address: (deal.merchant.address != null ? deal.merchant.address : ""),
+        location: `${deal.merchant.latitude},${deal.merchant.longitude}`,
         image_url: deal.image_url + "&geometry=150x150",
         distance: 2,
         short_title: deal.short_title,
